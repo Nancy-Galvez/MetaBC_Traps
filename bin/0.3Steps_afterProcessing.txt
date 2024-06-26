@@ -1,0 +1,65 @@
+##**Bioinformatic Steps after Filtering Reads**##
+
+##STEPS BEFORE BLAST TO MEGAN##
+
+###I joined all the individual zotus using the `cat` command. Note: This step is done separately from the general process above `0.1Processing_33BSoup.sh`. I choose 33 biodiversity soups with types of traps and experiment about error rate of PCR, ligation and sequencing.
+
+
+###I joined all the reads of 418-420
+
+`cd ./LENGTH418`
+cd 1Sopas33Experim/
+cd LENGTH418_420Exp33sopas/
+
+`cat *sorted418.fas > LENGTH420CatConservacion42Sopas.Ptrim.trimmo.Maxee1.LABEL.sorted420.fas`
+
+
+`cd ./RELABEL`
+cd Exper33Sopas/
+
+`cat *R1_R2.Ptrim.trimmo.Maxee1.LABEL.sorted420.uniques.zotus.relabel.fas > catExper33SOPAS.Ptrim.trimmo.Maxee1.LABEL.sorted420.uniques.zotus.relabel.fas`
+
+
+#
+
+###Note: I have two files:
+
+* LENGTH420CatConservacion42Sopas.Ptrim.trimmo.Maxee1.LABEL.sorted420.fas
+* catExper33SOPAS.Ptrim.trimmo.Maxee1.LABEL.sorted420.uniques.zotus.relabel.fas
+  
+
+
+###I get ZOTU uniques.
+
+`usearch100 -fastx_uniques all.ZOTUSbySAMPLE.ZONA.fas -fastaout all.ZOTUS_UNIQUES.ZONA.fas -sizeout &> all.ZOTUS_UNIQUES.ZONA.log`
+
+
+##BLAST TO MEGAN
+
+**`blastn`** Taxonomic identification of each read was done using BLAST against the nucleotide NCBI nt database (June 06 2018; blastn -outfmt 5 -evalue 0.001). 
+
+`blastn -db /db/Paula/nt_Sanger -query all.ZOTUS_UNIQUES.ZONA.fas -outfmt 5 -out nt_SangerVsall.ZOTUS_UNIQUES.ZONA.fas.xml -num_threads=4 -evalue 0.001 -max_target_seqs 100 &
+`
+#
+
+###After BLAST, I have two files. I removed the <;> from the tags.
+
+* all.ZOTUS_UNIQUES_conservacionSINPuntoyComaFinal.fasta
+* nt_SangerVsall.ZOTUS_UNIQUES_conservacion.fas.xml
+
+###I get all the reads from specific groups in MEGAN.
+
+**`MEGAN-6`** High-level taxonomic categories (order level) were then assigned to ASVs for each order using the lowest common ancestor (LCA) algorithm `(https://software-ab.informatik.uni-tuebingen.de/download/megan6/welcome.html)`. 
+
+###Note: I imported the *.fasta and *.fas.xml files from MEGAN.
+
+###I choosed 8 orders of arthropods: Diptera, Collembola, Arachnida, Coleoptera, Hemiptera, Hymenoptera, Lepidoptera and Myriapoda.
+
+###After, The tree was exported, visualised and edited using **`figtree-1.4.3`** `(http://tree.bio.ed.ac.uk/software/figtree/)`.
+
+#
+
+
+
+
+

@@ -1,0 +1,303 @@
+#**INITIAL STEPS**
+
+#**Community diversity and composition at the haplotype level of the Coleoptera order**
+
+#####In excel remove the simbol ## from the names of the table and rename the samples acccording to the code used in the gradient e.g. GRA_S10_D_F_A10
+library(stats)
+library(base)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library(PMCMR)
+library(rcdd) 
+library(vegan)
+library(betapart) 
+library(stringr)
+library(permute)
+library(lattice)
+library(PMCMRplus)
+
+#####open table with names including Region and habitat parameters
+s2_raw_all <- read.table("../../genetic/Data_in/Coleoptera/s2_raw_all_Coleoptera_threshold.txt", header=TRUE)
+dim(s2_raw_all)
+
+#**Table Haplotipos**
+#####remove additional columns and leave only names (of haplotipes), samples and taxa (and threshold in this case)
+s2_raw_all[,c(1:30,46)]->s2_raw 
+dim(s2_raw) ##51 samples = 51 plus 1 neg (the second neg from DOM_REPS is not there because all 0)
+colnames(s2_raw)
+
+#####Applying the conservative threshold (this is a binary column)
+s2_raw[which(s2_raw$conservative_threshold == "1"),]->s2_raw_threshold 
+s2_raw_threshold [,1:30]->s2_raw_threshold ##remove threshold col
+dim(s2_raw_threshold)
+colnames(s2_raw_threshold)
+
+##**transform in present/absence table**
+s2_raw_threshold->s2_f4_h #NOTA_Nancy: Tengo un subset de Colembolos
+s2_f4_h[s2_f4_h>1]<-1 ##2 warning corresponding wiht the columms of the names and taxa
+
+##**checking if there is any row with no presence**
+s2_f4_h[,2:30]->data_h 
+rowSums(data_h)
+length(which(rowSums(data_h)!=0))
+length(which(rowSums(data_h)==0))
+
+##**Coleoptera**
+t(s2_f4_h)->t_s2_f4_h ##trasp
+t_s2_f4_h[2:30,]->community_Coleoptera_h #NOTA_Nancy: Este numero es importante. Colocar exactamente el numero de "s2_f4[,2:52]->data".
+colnames(community_Coleoptera_h)<-t_s2_f4_h[1,]
+as.data.frame(community_Coleoptera_h)->community_Coleoptera_h ##trasp including col and row names
+####community_Acari[-49,]->community_Coleoptera ##removing neg
+dim(community_Coleoptera_h)
+community_Coleoptera_h[order(row.names(community_Coleoptera_h)),]->community_Coleoptera_h ##order samples
+write.table (community_Coleoptera_h, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/community_Coleoptera_h.txt") ##this is necessary for the format, not able to solve in other way
+read.table ("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/community_Coleoptera_h.txt")->community_Coleoptera_h
+
+##**submatrixes by Traps in Nevado Toluca.**
+dim(community_Coleoptera_h)
+community_Coleoptera_h[which(str_extract (row.names(community_Coleoptera_h), "_T_") %in% "_T_"),]->community_Coleoptera_Traps_h
+dim(community_Coleoptera_Traps_h)
+community_Coleoptera_Traps_h[,which(colSums(community_Coleoptera_Traps_h)!=0)]->community_Coleoptera_Traps_h ##to remove no data colums
+dim(community_Coleoptera_Traps_h)
+write.table (community_Coleoptera_Traps_h, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/community_Coleoptera_Traps_h.txt") ##this is necessary for the format, not able to solve in other way
+read.table ("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/community_Coleoptera_Traps_h.txt")->community_Coleoptera_Traps_h
+
+
+##**BY Traps**
+##**Generating a general table with names and habitat parameters**
+row.names(community_Coleoptera_Traps_h)->sample_names_Mountain1_h
+as.data.frame(sample_names_Mountain1_h)->sample_names_Mountain1_h
+sample_names_Mountain1_h %>% separate(sample_names_Mountain1_h, c("Conservation1","Mountain1","Traps","ID"), sep="_",remove=FALSE)->general_sample_Mountain1Traps_h
+general_sample_Mountain1Traps_h
+general_sample_Mountain1Traps_h %>% unite(Mountain1andTraps, Mountain1,Traps, sep="_",remove=FALSE)->general_sample_Mountain1Traps_h ##generating a variable combining layer and habitat
+general_sample_Mountain1Traps_h
+write.table(general_sample_Mountain1Traps_h, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/general_sample_Mountain1Traps_h.txt") ##this is the only way I found to be able to work later
+read.table("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/general_sample_Mountain1Traps_h.txt",header=TRUE)->general_sample_Mountain1Traps_h
+
+
+
+#**HAPLOTYPE RICHNESS TABLES, PLOTS AND ANALYSES by TrapsS** 
+##Coleoptera
+as.matrix(community_Coleoptera_Traps_h)->community_Coleoptera_Traps_h
+row.names(community_Coleoptera_Traps_h)->sample_names_Traps_h
+dim(community_Coleoptera_Traps_h)->dims_Traps_h
+dims_Traps_h
+.rowSums (community_Coleoptera_Traps_h,dims_Traps_h[1],dims_Traps_h[2])->sample_richness_Traps_h ##summatory by rows
+rbind(sample_names_Traps_h,sample_richness_Traps_h)->richness_Traps_h_Coleoptera
+t(richness_Traps_h_Coleoptera)->richness_Traps_h_Coleoptera
+colnames(richness_Traps_h_Coleoptera)<-c("sample_names_Traps_h","sample_richness_Traps_h")
+richness_Traps_h_Coleoptera
+as.data.frame(richness_Traps_h_Coleoptera)->richness_Traps_h_Coleoptera
+
+##**Generating variables with Traps. En la tabla rishnees. Generar variable de montana y sitio.** 
+richness_Traps_h_Coleoptera %>% separate(sample_names_Traps_h, c("Conservation1","Mountain1","Traps","ID"), sep="_",remove=FALSE)->richness_Traps_h_Coleoptera
+richness_Traps_h_Coleoptera
+richness_Traps_h_Coleoptera %>% unite(Mountain1Traps, Mountain1, Traps, sep="_",remove=FALSE)->richness_Traps_h_Coleoptera ##generating a variable combining layer and habitat
+richness_Traps_h_Coleoptera
+
+##**Generating variables with in total Traps_C.**
+#richness_Traps_h_Coleoptera %>% separate(sample_names_Traps_h, c("Conservation1","Mountain1","Traps","ID"), sep="_",remove=FALSE)->richness_TrapsC
+#richness_TrapsC
+#richness_TrapsC %>% unite(Conservation1Mountain1, Conservation1, Mountain1, sep="_",remove=FALSE)->richness_TrapsC ##generating a variable combining layer and habitat
+#richness_TrapsC
+
+##**BY Traps**
+write.table(richness_Traps_h_Coleoptera, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_Traps_h_Coleoptera.txt") ##this is the only way I found to be able to work later
+read.table("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_Traps_h_Coleoptera.txt",header=TRUE)->richness_Traps_h_Coleoptera
+
+##**BY Traps_C general**
+#write.table(richness_TrapsC, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_TrapsC_Coleoptera.txt") ##this is the only way I found to be able to work later
+#read.table("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_TrapsC_Coleoptera.txt",header=TRUE)->richness_TrapsC
+
+##**General plot of richness by sample in Traps**
+barplot(richness_Traps_h_Coleoptera$sample_richness_Traps_h,col=richness_Traps_h_Coleoptera$Mountain1Traps,names.arg= richness_Traps_h_Coleoptera$sample_names_Traps_h, las=2,cex.names=0.5, ylab="richness_Traps_h_Coleoptera", main="H richness_Traps Coleoptera")
+richness_Traps_h_Coleoptera %>% group_by(Mountain1Traps) %>% summarise(mean(sample_richness_Traps_h))
+
+##**min, max, ds Summarise**
+richness_Traps_h_Coleoptera %>% group_by(Mountain1Traps) %>% summarise(mean(sample_richness_Traps_h))
+richness_Traps_h_Coleoptera %>% group_by(Mountain1Traps) %>% summarise(min(sample_richness_Traps_h))
+richness_Traps_h_Coleoptera %>% group_by(Mountain1Traps) %>% summarise(max(sample_richness_Traps_h))
+richness_Traps_h_Coleoptera %>% group_by(Mountain1Traps) %>% summarise(sd(sample_richness_Traps_h))
+
+##**Global richness by Traps.**  
+plot(richness_Traps_h_Coleoptera$Mountain1Traps,richness_Traps_h_Coleoptera$sample_richness_Traps_h,ylab="richness_Traps_h_Coleoptera", cex=1.4, cex.axis=2.3, lwd=2.5, ylim=c(0,10))
+kruskal.test(sample_richness_Traps_h ~ Mountain1Traps, data = richness_Traps_h_Coleoptera)
+#posthoc.kruskal.nemenyi.test(x=richness_Traps_h_Coleoptera$sample_richness_Traps_h, g=richness_Traps_h_Coleoptera$Mountain1Traps, method="Bonferroni")
+#PMCMRplus::kwAllPairsNemenyiTest(x=richness_Traps_h_Coleoptera$sample_richness_Traps_h, g=richness_Traps_h_Coleoptera$Mountain1Traps, dist = c("Tukey", "Chisquare"), p.adjust.method="bonferroni")
+PMCMRplus::kwAllPairsConoverTest(x=richness_Traps_h_Coleoptera$sample_richness_Traps_h, g=richness_Traps_h_Coleoptera$Mountain1Traps, p.adjust.method = "single-step")
+##Comparison of each group against. 
+#text(x=c(1,2,3,4), y=(2), labels=c("ab","a","ab","b"), cex=1.5)
+text(x=4.3, y=0.5, labels="ns", cex=2)
+
+#**BETADIVERSITY ORDINATIONS by Trapss** 
+#**Coleoptera**
+##beta general
+
+beta.multi(community_Coleoptera_Traps_h, index.family="sorensen")
+
+##turnover by pairs, nmds, anosim
+beta.pair(community_Coleoptera_Traps_h, index.family="sorensen")->beta.pair  ##betadiversity by pair of communities using sorensen on the precense/absence data, with estimation of turnover and nestedness datamatrixes simultaneously
+metaMDS (beta.pair$beta.sim)->MDSbetasim_Th ##NMDS
+
+plot (MDSbetasim_Th, main="Coleoptera_Traps_h") 
+x<- MDSbetasim_Th$points[,1]
+y<- MDSbetasim_Th$points[,2]
+text(x, y, pos = 1, cex=0.7, labels = row.names (community_Coleoptera_Traps_h))
+
+plot (MDSbetasim_Th, main="Coleoptera_Traps_h")
+with(general_sample_Mountain1Traps_h,ordispider(MDSbetasim_Th, Traps, label=T, col="blue"))
+
+plot (MDSbetasim_Th, xlim=c(-0.4, 0.4), ylim=c(-0.4, 0.4), cex.axis=1.4, cex=1.2, cex.lab=1.4, main="Coleoptera_Traps_h")
+with(general_sample_Mountain1Traps_h,ordispider(MDSbetasim_Th, Traps, label=T, cex.lab=0.9, col= c("#153a7b", "#eaa22f", "#97518b", "#81b9d0")))
+
+##**Anosim**
+anosim(beta.pair$beta.sim, general_sample_Mountain1Traps_h$Traps, permutations=999)
+
+plot (MDSbetasim_Th, xlim=c(-0.4, 0.4), ylim=c(-0.4, 0.4), cex=2, cex.lab=1, cex.axis=2.3, lwd=4.5)
+with(general_sample_Mountain1Traps_h,ordispider(MDSbetasim_Th, Traps, label=T, cex.lab=1, col= c("#153a7b", "#eaa22f", "#97518b", "#81b9d0"), lwd=4.5))
+##I put letter "r" in cursive and r2 value
+mylabel = bquote(italic(r)^2)
+text(x=0.18, y=-0.35, labels = mylabel, cex=2)
+text(x=0.43, y=-0.35, labels="=0.05 ns", cex=2)
+mtext(c("Haplotypes"), side = 3, col = "black", line = 1, cex = 2)
+
+#**END TRAPS**
+
+
+
+#############################################
+##**submatrixes by Groups in Nevado Toluca.**
+dim(community_Coleoptera_h)
+community_Coleoptera_h[which(str_extract (row.names(community_Coleoptera_h), "G_") %in% "G_"),]->community_Coleoptera_Groups_h
+dim(community_Coleoptera_Groups_h)
+community_Coleoptera_Groups_h[,which(colSums(community_Coleoptera_Groups_h)!=0)]->community_Coleoptera_Groups_h ##to remove no data colums
+dim(community_Coleoptera_Groups_h)
+write.table (community_Coleoptera_Groups_h, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/community_Coleoptera_Groups_h.txt") ##this is necessary for the format, not able to solve in other way
+read.table ("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/community_Coleoptera_Groups_h.txt")->community_Coleoptera_Groups_h
+
+
+##**BY Groups**
+##**Generating a general table with names and habitat parameters**
+row.names(community_Coleoptera_Groups_h)->sample_names_Mountain2_h
+as.data.frame(sample_names_Mountain2_h)->sample_names_Mountain2_h
+sample_names_Mountain2_h %>% separate(sample_names_Mountain2_h, c("Conservation2","Mountain2","Groups","ID"), sep="_",remove=FALSE)->general_sample_Mountain2Groups_h
+general_sample_Mountain2Groups_h
+general_sample_Mountain2Groups_h %>% unite(Mountain2andGroups, Mountain2,Groups, sep="_",remove=FALSE)->general_sample_Mountain2Groups_h ##generating a variable combining layer and habitat
+general_sample_Mountain2Groups_h
+write.table(general_sample_Mountain2Groups_h, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/general_sample_Mountain2Groups_h.txt") ##this is the only way I found to be able to work later
+read.table("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/general_sample_Mountain2Groups_h.txt",header=TRUE)->general_sample_Mountain2Groups_h
+
+
+#**HAPLOTYPE RICHNESS TABLES, PLOTS AND ANALYSES by GroupsS** 
+##Coleoptera
+as.matrix(community_Coleoptera_Groups_h)->community_Coleoptera_Groups_h
+row.names(community_Coleoptera_Groups_h)->sample_names_Groups_h
+dim(community_Coleoptera_Groups_h)->dims_Groups_h
+dims_Groups_h
+.rowSums (community_Coleoptera_Groups_h,dims_Groups_h[1],dims_Groups_h[2])->sample_richness_Groups_h ##summatory by rows
+rbind(sample_names_Groups_h,sample_richness_Groups_h)->richness_Groups_h_Coleoptera
+t(richness_Groups_h_Coleoptera)->richness_Groups_h_Coleoptera
+colnames(richness_Groups_h_Coleoptera)<-c("sample_names_Groups_h","sample_richness_Groups_h")
+richness_Groups_h_Coleoptera
+as.data.frame(richness_Groups_h_Coleoptera)->richness_Groups_h_Coleoptera
+
+##**Generating variables with Groups. En la tabla rishnees. Generar variable de montana y sitio.** 
+richness_Groups_h_Coleoptera %>% separate(sample_names_Groups_h, c("Conservation2","Mountain2","Groups","ID"), sep="_",remove=FALSE)->richness_Groups_h_Coleoptera
+richness_Groups_h_Coleoptera
+richness_Groups_h_Coleoptera %>% unite(Mountain2Groups, Mountain2, Groups, sep="_",remove=FALSE)->richness_Groups_h_Coleoptera ##generating a variable combining layer and habitat
+richness_Groups_h_Coleoptera
+
+##**Generating variables with in total Groups_C.**
+#richness_Groups_h_Coleoptera %>% separate(sample_names_Groups_h, c("Conservation2","Mountain2","Groups","ID"), sep="_",remove=FALSE)->richness_GroupsC
+#richness_GroupsC
+#richness_GroupsC %>% unite(Conservation2Mountain2, Conservation2, Mountain2, sep="_",remove=FALSE)->richness_GroupsC ##generating a variable combining layer and habitat
+#richness_GroupsC
+
+##**BY Groups**
+write.table(richness_Groups_h_Coleoptera, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_Groups_h_Coleoptera.txt") ##this is the only way I found to be able to work later
+read.table("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_Groups_h_Coleoptera.txt",header=TRUE)->richness_Groups_h_Coleoptera
+
+##**BY Groups_C general**
+#write.table(richness_GroupsC, file="../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_GroupsC_Coleoptera.txt") ##this is the only way I found to be able to work later
+#read.table("../../genetic/Data_out/Coleoptera/Coleoptera_Haplotypes/richness_GroupsC_Coleoptera.txt",header=TRUE)->richness_GroupsC
+
+##**General plot of richness by sample in Groups**
+barplot(richness_Groups_h_Coleoptera$sample_richness_Groups_h,col=richness_Groups_h_Coleoptera$Mountain2Groups,names.arg= richness_Groups_h_Coleoptera$sample_names_Groups_h, las=2,cex.names=0.5, ylab="richness_Groups_h_Coleoptera", main="H richness_Groups Coleoptera")
+richness_Groups_h_Coleoptera %>% group_by(Mountain2Groups) %>% summarise(mean(sample_richness_Groups_h))
+
+##**min, max, ds Summarise**
+richness_Groups_h_Coleoptera %>% group_by(Mountain2Groups) %>% summarise(mean(sample_richness_Groups_h))
+richness_Groups_h_Coleoptera %>% group_by(Mountain2Groups) %>% summarise(min(sample_richness_Groups_h))
+richness_Groups_h_Coleoptera %>% group_by(Mountain2Groups) %>% summarise(max(sample_richness_Groups_h))
+richness_Groups_h_Coleoptera %>% group_by(Mountain2Groups) %>% summarise(sd(sample_richness_Groups_h))
+
+##**General mean, min, max, ds by sample in Groups_richness_GroupsC**
+#richness_GroupsC %>% group_by(Conservation2Mountain2) %>% summarise(mean(sample_richness_Groups_h))
+#richness_GroupsC %>% group_by(Conservation2Mountain2) %>% summarise(min(sample_richness_Groups_h))
+#richness_GroupsC %>% group_by(Conservation2Mountain2) %>% summarise(max(sample_richness_Groups_h))
+#richness_GroupsC %>% group_by(Conservation2Mountain2) %>% summarise(sd(sample_richness_Groups_h))
+
+##**Global richness by Groups.**  
+plot(richness_Groups_h_Coleoptera$Mountain2Groups,richness_Groups_h_Coleoptera$sample_richness_Groups_h,ylab="richness_Groups_h_Coleoptera", cex=1.4, cex.axis=2.3, lwd=2.5, ylim=c(0,15))
+kruskal.test(sample_richness_Groups_h ~ Mountain2Groups, data = richness_Groups_h_Coleoptera)
+#PMCMRplus::kwAllPairsNemenyiTest(x=richness_Groups_h_Coleoptera$sample_richness_Groups_h, g=richness_Groups_h_Coleoptera$Mountain2Groups, p.adjust.method = "single-step")
+PMCMRplus::kwAllPairsConoverTest(x=richness_Groups_h_Coleoptera$sample_richness_Groups_h, g=richness_Groups_h_Coleoptera$Mountain2Groups, p.adjust.method = "single-step")
+#PMCMRplus::kwAllPairsDunnTest(x=richness_Groups_h_Coleoptera$sample_richness_Groups_h, g=richness_Groups_h_Coleoptera$Mountain2Groups, p.adjust.method="bonferroni")
+#kwAllPairsNemenyiTest(x=richness_Groups_h_Coleoptera$sample_richness_Groups_h, g=richness_Groups_h_Coleoptera$Mountain2Groups)
+##Comparison of each group against. 
+#text(x=c(1,2,3,4,5), y=2, labels=c("a","ab","ab","b","ab"), cex=1.5)
+text(x=5.3, y=0.3, labels="ns", cex=2)
+
+#**BETADIVERSITY ORDINATIONS by Groupss** 
+#**Coleoptera**
+##beta general
+
+beta.multi(community_Coleoptera_Groups_h, index.family="sorensen")
+
+##turnover by pairs, nmds, anosim
+beta.pair(community_Coleoptera_Groups_h, index.family="sorensen")->beta.pair  ##betadiversity by pair of communities using sorensen on the precense/absence data, with estimation of turnover and nestedness datamatrixes simultaneously
+metaMDS (beta.pair$beta.sim)->MDSbetasim_Gh ##NMDS
+
+plot (MDSbetasim_Gh, main="Coleoptera_Groups_h") 
+x<- MDSbetasim_Gh$points[,1]
+y<- MDSbetasim_Gh$points[,2]
+text(x, y, pos = 1, cex=0.7, labels = row.names (community_Coleoptera_Groups_h))
+
+##**By SITES quitar**
+##**repeating after removing outlayers from matrix and general habitat table**
+community_Coleoptera_Groups_h[-which(row.names(community_Coleoptera_Groups_h) %in% c("G_B_Sa_55TRE137a", "G_E_Pab_55TRE137")),]->community_Coleoptera_Groups_sinoutlayer
+community_Coleoptera_Groups_sinoutlayer[,which(colSums(community_Coleoptera_Groups_sinoutlayer)!=0)]->community_Coleoptera_Groups_sinoutlayer ##to remove no data colums
+dim(community_Coleoptera_Groups_sinoutlayer)  
+
+general_sample_Mountain2Groups_h[-which(general_sample_Mountain2Groups_h$sample_names %in% c("G_B_Sa_55TRE137a", "G_E_Pab_55TRE137")),]->general_sample_Groups_sinoutlayer
+
+beta.pair(community_Coleoptera_Groups_sinoutlayer, index.family="sorensen")->beta.pair  ##betadiversity by pair of communities using sorensen on the precense/absence data, with estimation of turnover and nestedness datamatrixes simultaneously
+metaMDS (beta.pair$beta.sim)->MDSbetasim_Gh1 ##NMDS
+
+plot (MDSbetasim_Gh1, main="Coleoptera_Groups_h") 
+x<- MDSbetasim_Gh1$points[,1]
+y<- MDSbetasim_Gh1$points[,2]
+text(x, y, pos = 1, cex=0.7, labels = row.names (community_Coleoptera_Groups_sinoutlayer))
+
+
+plot (MDSbetasim_Gh1, main="Coleoptera_Groups_h")
+with(general_sample_Groups_sinoutlayer,ordispider(MDSbetasim_Gh1, Mountain2, label=T, col="blue"))
+
+plot (MDSbetasim_Gh1, xlim=c(-0.5, 0.5), ylim=c(-0.4, 0.4), cex.axis=1.4, cex=1.2, cex.lab=1.4, main="Coleoptera_Groups_h")
+with(general_sample_Groups_sinoutlayer,ordispider(MDSbetasim_Gh1, Mountain2, label=T, cex.lab=0.9, col= c("#153a7b", "#eaa22f", "#97518b", "#81b9d0", "#c1d6b1")))
+
+##**Anosim**
+anosim(beta.pair$beta.sim, general_sample_Groups_sinoutlayer$Mountain2, permutations=999)
+
+plot (MDSbetasim_Gh1, xlim=c(-0.4, 0.4), ylim=c(-0.4, 0.4), cex=2, cex.lab=1, cex.axis=2.3, lwd=4.5)
+with(general_sample_Groups_sinoutlayer,ordispider(MDSbetasim_Gh1, Mountain2, label=T, cex.lab=1, col= c("#153a7b", "#eaa22f", "#97518b", "#81b9d0", "#c1d6b1"), lwd=4.5))
+##I put letter "r" in cursive and r2 value
+mylabel = bquote(italic(r)^2)
+text(x=0.20, y=-0.35, labels = mylabel, cex=2)
+text(x=0.45, y=-0.35, labels="=0.15 ns", cex=2)
+mtext(c("Haplotypes"), side = 3, col = "black", line = 1, cex = 2)
+
+#**END**
+
+

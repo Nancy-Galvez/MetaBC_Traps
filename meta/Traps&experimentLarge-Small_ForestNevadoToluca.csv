@@ -1,0 +1,34 @@
+id,code,label_metabarcoding,Short Description,Long Description,Number of reads,Merge_Pair,Forest type
+32,32TCONS2,G_A_Pab_32TCONS2,Group A: Soup pool ab,Group A: Soup pool ab (replicate Group D),"368,625","273,314",Abies religiosa
+10,10MMOC3J,T_J_MM_10MMOC3J,Trap Type,Trap Type: Dry under conservation MM 2014-Soapy-water,"56,445","39,759",Abies religiosa
+1,1SHC5C2P,T_P_SJH_1SHC5C2P,Trap Type,Trap Type: Dry under conservation NT 2014-pitfall,"106,108","79,160",Abies religiosa
+9,9MMC3P,T_P_MM_9MMC3P,Trap Type,Trap Type: Dry under conservation MM 2014-pitfall,"179,412","128,337",Abies religiosa
+6,6IZPOC1J,T_J_IZP_6IZPOC1J,Trap Type,Trap Type: Dry under conservation IZTA-POP 2014-Soapy-water,"83,357","52,612",Abies religiosa
+7,7IZPOC1W,T_W_IZP_7IZPOC1W,Trap Type,Trap Type: Dry under conservation IZTA-POP 2014-Winckler,"103,649","75,992",Abies religiosa
+3,3SHCO5C2,T_W_SJH_3SHCO5C2W,Trap Type,Trap Type: Dry under conservation NT 2014-Winckler,"80,448","51,806",Abies religiosa
+13,13SHC4C1,G_A_Pab_13SHC4C1,Group A: Soup pool ab,Group A: Soup pool ab  (replicate Group D),"246,351","182,416",Abies religiosa
+4,4SHC5C2R,T_R_SJH_4SHC5C2R,Trap Type,Trap Type: Dry under conservation NT 2014-Beating-tray,"191,970","149,460",Abies religiosa
+21,21MMC3,G_E_Pab_21MMC3,Group A: Soup pool ab,Group E: Soup pool ab in sequencing,"154,876","104,181",Abies religiosa
+29,29TRE808,G_E_Pab_29TRE808,Group A: Soup pool ab,Group E: Soup pool ab in sequencing,"146,153","94,299",Abies religiosa
+55,55TRE137,G_E_Pab_55TRE137,Group A: Soup pool ab,Group E: Soup pool ab in sequencing,"191,577","139,662",Abies religiosa
+16,16IZPOC1,G_E_Pab_16IZPOC1,Group A: Soup pool ab,Group E: Soup pool ab in sequencing,"266,839","187,588",Abies religiosa
+41,41TDIST2,G_E_Pab_41TDIST2,Group A: Soup pool ab,Group E: Soup pool ab in sequencing,"219,915","166,390",Abies religiosa
+5,5IZPOC1P,T_P_IZP_5IZPOC1P,Trap Type,Trap Type: Dry under conservation IZTA-POP 2014-pitfall,"71,932","26,457",Abies religiosa
+8,8IZTPOCR,T_R_IZT_8IZTPOCR,Trap Type,Trap Type: Dry under conservation IZTA-POP 2014-Beating-tray,"132,227","93,850",Abies religiosa
+19,19MMC1,G_A_Pab_19MMC1,Group A: Soup pool ab,Group A: Soup pool ab  (replicate Group D),"503,581","362,053",Abies religiosa
+11,11MMOC3W,T_W_MM_11MMOC3W,Trap Type,Trap Type: Dry under conservation MM 2014-Winckler,"96,223","64,066",Abies religiosa
+55,55TRE137b,G_C_Sb_55TRE137b,Group C: Soup b (small specimens),Group C: Soup b (small specimens),"110,864","83,130",Abies religiosa
+16,16IZPOC1a,G_C_Sa_16IZPOC1a,Group B: Soup a (large specimens),Group B: Soup a (large specimens),"80,315","56,176",Abies religiosa
+16,16IZPOC1b,G_C_Sb_16IZPOC1b,Group C: Soup b (small specimens),Group C: Soup b (small specimens),"119,157","87,966",Abies religiosa
+12,12MMOC3R,T_R_MM_12MMOC3R,Trap Type,Trap Type: Dry under conservation MM 2014-Beating-tray,"461,391","320,497",Abies religiosa
+21,21MMC3a,G_C_Sa_21MMC3a,Group B: Soup a (large specimens),Group B: Soup a (large specimens),"118,866","75,959",Abies religiosa
+41,41TDIST2a,G_C_Sa_41TDIST2a,Group B: Soup a (large specimens),Group B: Soup a (large specimens),"44,268","33,673",Abies religiosa
+21,21MMC3b,G_C_Sb_21MMC3b,Group C: Soup b (small specimens),Group C: Soup b (small specimens),"89,353","67,925",Abies religiosa
+41,41TDIST2b,G_C_Sb_41TDIST2b,Group C: Soup b (small specimens),Group C: Soup b (small specimens),"181,338","132,873",Abies religiosa
+29,29TRE808a,G_C_Sa_29TRE808a,Group B: Soup a (large specimens),Group B: Soup a (large specimens),"95,186","75,354",Abies religiosa
+32,32TCN2b,G_D_Pab_32TCN2b,Group D: Soup pool ab (replicate Group A),"Group D: Soup pool ab (replicate Group A). Nota: puede ser solo ""b"" PCR intenso",778,151,Abies religiosa
+2,2SHCN5C2J,T_J_SJH_2SHCN5C2J,Trap Type,Trap Type: Dry under conservation NT 2014-Soapy-water,"173,278","98,748",Abies religiosa
+29,29TRE808b,G_C_Sb_29TRE808b,Group C: Soup b (small specimens),Group C: Soup b (small specimens),"48,285","32,181",Abies religiosa
+13,13SHC4a,G_D_Pab_13SHC4a,Group D: Soup pool ab (replicate Group A),"Group D: Soup pool ab (replicate Group A) Nota: puede ser solo ""a"" PCR poco intenso","76,066","52,736",Abies religiosa
+55,55TRE137a,G_C_Sa_55TRE137a,Group B: Soup a (large specimens),Group B: Soup a (large specimens),"94,823","73,249",Abies religiosa
+19,19MMC1a,G_D_Pab_19MMC1a,Group D: Soup pool ab (replicate Group A),"Group D: Soup pool ab (replicate Group A) Nota: puede ser solo ""a"" PCR muy poco intenso","33,866","24,546",Abies religiosa

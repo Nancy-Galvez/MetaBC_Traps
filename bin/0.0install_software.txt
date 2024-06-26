@@ -1,0 +1,15 @@
+##**Programs for Bioinformatics processing to identify lineages different thresholds of genetic similarity**##
+
+**`fastqc`** Raw reads were quality checked with fastqc `(https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)`.
+
+**`fastx-toolkit`** Primers were trimmed using the fastx_trimmer trimming R1=21 and R2=27 bases `(http://hannonlab.cshl.edu/fastx_toolkit/)`.
+
+**`trimmomatic-0.36`** Reads were then processed using TRAILING:20 to remove bases at the end of a read, if below a threshold quality of 20 `(http://www.usadellab.org/cms/?page=trimmomatic)`.
+
+**`pairfq-0.17`** R1 and R2 reads were used to search paired sequences `(https://github.com/sestaton/Pairfq)`.
+
+**`usearch-9.2`** Overlapping paired reads were merged with the fastq_mergepairs command, -fastq_minovlen 50 and -fastq_maxdiffs 15 `(https://www.drive5.com/usearch/manual9.2/)`.
+
+**`usearch-10`** Quality-filtered (Maxee = 1), dereplicated (-fastx_uniques) and sorted (-sortbylength) options were used to keep only reads of 418 bp `(https://www.drive5.com/usearch/manual10/)`.
+
+

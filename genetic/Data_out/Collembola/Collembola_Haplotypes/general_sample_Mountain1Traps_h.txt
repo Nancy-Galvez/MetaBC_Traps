@@ -1,0 +1,8 @@
+"sample_names_Mountain1_h" "Conservation1" "Mountain1andTraps" "Mountain1" "Traps" "ID"
+"1" "IZP_T_P_5IZPOC1P" "IZP" "T_P" "T" "P" "5IZPOC1P"
+"2" "IZP_T_W_7IZPOC1W" "IZP" "T_W" "T" "W" "7IZPOC1W"
+"3" "IZT_T_R_8IZTPOCR" "IZT" "T_R" "T" "R" "8IZTPOCR"
+"4" "MM_T_J_10MMOC3J" "MM" "T_J" "T" "J" "10MMOC3J"
+"5" "MM_T_W_11MMOC3W" "MM" "T_W" "T" "W" "11MMOC3W"
+"6" "SJH_T_P_1SHC5C2P" "SJH" "T_P" "T" "P" "1SHC5C2P"
+"7" "SJH_T_W_3SHCO5C2W" "SJH" "T_W" "T" "W" "3SHCO5C2W"

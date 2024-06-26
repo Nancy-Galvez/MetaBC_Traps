@@ -1,0 +1,21 @@
+##**Merged Otus tables and Limited Species**##
+
+
+#Here, we edited the tables in excele.
+
+
+##Dowload all data from keri to PC
+
+scp -r ngalvez@nodo7.conabio.gob.mx:/LUSTRE/Genetica/ngalvez/MetaBC_Traps/genetic/Data_out/ASVs_Table/allele_table_Arachnida_138_33SOPAS_UNIQUES_ExpeRelabel420_20_26_1_alignment.txt .
+
+
+scp -r ngalvez@nodo7.conabio.gob.mx:/LUSTRE/Genetica/ngalvez/MetaBC_Traps/genetic/Data_out/ASVs_Table/allele_table_Coleoptera_71_33SOPAS_UNIQUES_ExpeRelabel420_20_26_1_alignment.txt .
+
+
+scp -r ngalvez@nodo7.conabio.gob.mx:/LUSTRE/Genetica/ngalvez/MetaBC_Traps/genetic/Data_out/ASVs_Table/allele_table_Collembola_158_33SOPAS_UNIQUES_ExpeRelabel420_20_26_1_alignment.txt .
+
+scp -r ngalvez@nodo7.conabio.gob.mx:/LUSTRE/Genetica/ngalvez/MetaBC_Traps/genetic/Data_out/ASVs_Table/allele_table_Dipteras_583_33SOPAS_UNIQUES_ExpeRelabel420_20_26_1_alignment.txt .
+
+scp -r ngalvez@nodo7.conabio.gob.mx:/LUSTRE/Genetica/ngalvez/MetaBC_Traps/genetic/Data_out/ASVs_Table/allele_table_Hemiptera_150_33SOPAS_UNIQUES_ExpeRelabel420_20_26_1_alignment.txt .
+
+scp -r ngalvez@nodo7.conabio.gob.mx:/LUSTRE/Genetica/ngalvez/MetaBC_Traps/genetic/Data_out/ASVs_Table/allele_table_Hymenoptera_161_33SOPAS_UNIQUES_ExpeRelabel420_20_26_1_alignment.txt .
